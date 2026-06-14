@@ -1,0 +1,75 @@
+#search-dialog {
+  top: 20vh;
+  bottom: auto;
+
+  article {
+    > header {
+      padding: 0;
+
+      label,
+      input {
+        width: 100%;
+        border-radius: inherit;
+      }
+
+      input {
+        padding-block: 1rem;
+      }
+    }
+  }
+
+  .empty {
+    padding: 3rem 2rem;
+  }
+}
+
+#search-popular,
+#search-results-section {
+  padding: 0.5rem;
+}
+
+.search-section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ui-neutral-400);
+  padding: 0.25rem 0.75rem;
+  margin: 0 0 0.25rem;
+}
+
+#search-popular-list,
+#search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.search-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    background: var(--ui-neutral-50);
+  }
+}
+
+.search-result-title {
+  font-weight: 500;
+}
+
+.search-result-route {
+  font-size: 0.8rem;
+  color: var(--ui-neutral-400);
+  font-family: monospace;
+  flex-shrink: 0;
+}

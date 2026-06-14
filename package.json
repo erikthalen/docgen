@@ -1,0 +1,10 @@
+{
+  "name": "docgen",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm run -r --parallel --if-present dev"
+  },
+  "engines": {
+    "node": ">=23.6.0"
+  }
+}

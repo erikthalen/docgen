@@ -1,0 +1,179 @@
+@import "./toc.css" layer(docgen);
+@import "./search.css" layer(docgen);
+
+@layer docgen {
+  :root {
+    --ui-primary: light-dark(#111111, #ffffff);
+    --border-color: var(--ui-neutral-200);
+
+    scroll-padding-top: 70px;
+  }
+
+  body {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 100svh;
+    background-color: var(--ui-background-color);
+    overflow-x: clip;
+
+    > header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      column-gap: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: var(--ui-background-color);
+
+      position: sticky;
+      top: 0;
+      z-index: 1;
+
+      border-bottom: 1px solid var(--border-color);
+
+      img {
+        width: 40px;
+      }
+
+      aside {
+        display: flex;
+        column-gap: 1rem;
+      }
+    }
+
+    > main {
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: start;
+
+      &:has(> nav) {
+        grid-template-columns: auto 1fr;
+
+        > section {
+          border-left: 1px solid var(--border-color);
+        }
+      }
+
+      &:has(> aside) {
+        grid-template-columns: 1fr auto;
+      }
+
+      &:has(> nav):has(> aside) {
+        grid-template-columns: auto 1fr auto;
+      }
+
+      > nav {
+        width: 220px;
+        padding: 1rem 0.5rem;
+        text-transform: capitalize;
+
+        position: sticky;
+        top: 55px;
+        z-index: 1;
+      }
+
+      > section {
+        padding: 2.5rem 3rem;
+      }
+
+      > aside {
+        width: 200px;
+        padding: 1rem 0.5rem;
+        /* border-left: 1px solid var(--border-color); */
+
+        position: sticky;
+        top: 55px;
+        z-index: 1;
+      }
+    }
+  }
+
+  .code-filename {
+    --shiki-light: #24292e;
+    --shiki-dark: #e1e4e8;
+    --shiki-light-bg: #fff;
+    --shiki-dark-bg: #24292e;
+
+    display: block;
+    padding: 0.75rem 0.75rem;
+    font-size: 0.9rem;
+    font-family: monospace;
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+
+    color: var(--ui-neutral-400);
+  }
+
+  .code-filename + .shiki {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-top: 0;
+  }
+
+  .shiki {
+    position: relative;
+
+    padding: 1rem 1.25rem 1rem 2.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    counter-reset: line;
+    overflow-x: auto;
+
+    font-size: 0.9rem;
+    line-height: 1.65;
+
+    .copy-code {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+    }
+
+    .line {
+      position: relative;
+      counter-increment: line;
+
+      &::before {
+        content: counter(line);
+        position: absolute;
+        left: -2.25rem;
+        width: 1.75rem;
+        text-align: right;
+        color: var(--ui-neutral-400);
+        user-select: none;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .shiki,
+  .shiki span {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+  }
+
+  .code-filename {
+    background-color: var(--shiki-light-bg);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    [data-color-scheme="revert-layer"] .shiki,
+    [data-color-scheme="revert-layer"] .shiki span {
+      color: var(--shiki-dark);
+      background-color: var(--shiki-dark-bg);
+    }
+
+    [data-color-scheme="revert-layer"] .code-filename {
+      background-color: var(--shiki-dark-bg);
+    }
+  }
+
+  [data-color-scheme="dark"] .shiki,
+  [data-color-scheme="dark"] .shiki span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
+
+  [data-color-scheme="dark"] .code-filename {
+    background-color: var(--shiki-dark-bg);
+  }
+}

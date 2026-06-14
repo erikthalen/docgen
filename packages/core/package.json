@@ -1,0 +1,27 @@
+{
+  "name": "@erikt/docgen",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "docgen": "./bin.ts"
+  },
+  "imports": {
+    "#html": "./src/utils/html.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@shikijs/rehype": "catalog:",
+    "minisearch": "catalog:",
+    "rehype-slug": "catalog:",
+    "rehype-stringify": "catalog:",
+    "remark-gfm": "catalog:",
+    "remark-parse": "catalog:",
+    "remark-rehype": "catalog:",
+    "unified": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  }
+}

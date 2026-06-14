@@ -1,0 +1,15 @@
+{
+  "name": "@docgen/example",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "docgen dev",
+    "build": "docgen build"
+  },
+  "dependencies": {
+    "@erikt/docgen": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  }
+}

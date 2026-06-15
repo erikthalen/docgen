@@ -1,9 +1,12 @@
 {
   "name": "@erikt/docgen",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "bin": {
     "docgen": "./bin.ts"
+  },
+  "scripts": {
+    "build": "tsdown src/index.ts --out-dir dist --dts"
   },
   "imports": {
     "#html": "./src/utils/html.ts"
@@ -11,6 +14,14 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@shikijs/rehype": "catalog:",
     "minisearch": "catalog:",
@@ -23,6 +34,7 @@
     "unified": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "catalog:"
+    "@types/node": "catalog:",
+    "tsdown": "catalog:"
   }
 }

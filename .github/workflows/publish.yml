@@ -37,6 +37,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
         if: steps.version.outputs.changed == 'true'
 
+      - run: pnpm --filter @erikt/docgen build
+        if: steps.version.outputs.changed == 'true'
+
       - run: pnpm publish --no-git-checks --access public
         if: steps.version.outputs.changed == 'true'
         working-directory: packages/core

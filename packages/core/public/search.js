@@ -1,5 +1,5 @@
 import MiniSearch from "minisearch";
-import { html } from "/html.js";
+import { html } from "html.js";
 
 const dialog = document.getElementById("search-dialog");
 const input = document.getElementById("search-input");

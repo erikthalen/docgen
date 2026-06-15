@@ -36,7 +36,8 @@ export async function layout(
             "imports": {
               "alpinejs": "https://esm.sh/alpinejs@3.15.12",
               "@alpinejs/persist": "https://esm.sh/@alpinejs/persist@3.15.12",
-              "minisearch": "https://esm.sh/minisearch@7"
+              "minisearch": "https://esm.sh/minisearch@7",
+              "html.js": "${base}/html.js"
             }
           }
         </script>

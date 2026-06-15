@@ -48,5 +48,5 @@ export const searchDialog = html`
     </article>
   </dialog>
 
-  <script type="module" src="/search.js"></script>
+  <script type="module" src="search.js"></script>
 `;

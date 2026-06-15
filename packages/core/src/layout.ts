@@ -21,8 +21,6 @@ export async function layout(
     ? h1Match[1].replace(/<[^>]+>/g, "").trim() + " – Docgen"
     : "Docgen";
 
-  console.log(currentRoute, base);
-
   return html`<!DOCTYPE html>
     <html>
       <head>

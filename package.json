@@ -2,7 +2,8 @@
   "name": "docgen",
   "private": true,
   "scripts": {
-    "dev": "pnpm run -r --parallel --if-present dev"
+    "dev": "pnpm run -r --parallel --if-present dev",
+    "build": "pnpm --filter @docgen/example build"
   },
   "devDependencies": {
     "@types/node": "catalog:"

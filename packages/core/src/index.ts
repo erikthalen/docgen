@@ -49,7 +49,9 @@ function sortKey(name: string): number {
 
 function scanPages(dir: string, base: string): string[] {
   const entries = readdirSync(dir, { withFileTypes: true });
-  entries.sort((a, b) => sortKey(a.name) - sortKey(b.name) || a.name.localeCompare(b.name));
+  entries.sort(
+    (a, b) => sortKey(a.name) - sortKey(b.name) || a.name.localeCompare(b.name),
+  );
   return entries.flatMap((entry: Dirent) => {
     const full = join(dir, entry.name);
     if (entry.isDirectory()) return scanPages(full, base);
@@ -61,7 +63,10 @@ function scanPages(dir: string, base: string): string[] {
 function fileToRoute(filePath: string, pagesDir: string): string {
   const rel = filePath.slice(pagesDir.length + 1).replace(/\\/g, "/");
   const withoutExt = rel.slice(0, -extname(rel).length);
-  const stripped = withoutExt.split("/").map((seg) => seg.replace(/^\d+-/, "")).join("/");
+  const stripped = withoutExt
+    .split("/")
+    .map((seg) => seg.replace(/^\d+-/, ""))
+    .join("/");
   const normalized = stripped.replace(/(^|\/)index$/, "");
   return "/" + normalized;
 }
@@ -75,15 +80,22 @@ async function buildPages(pagesDir: string) {
       const route = fileToRoute(filePath, pagesDir);
       if (ext === ".md") {
         const parsed = await parseMarkdown(readFileSync(filePath, "utf-8"));
-        return { route, content: parsed.html, description: parsed.frontmatter.description ?? "" };
+        return {
+          route,
+          content: parsed.html,
+          description: parsed.frontmatter.description ?? "",
+        };
       }
-      const content = (await import(pathToFileURL(filePath).href)).default as SafeHtml;
+      const content = (await import(pathToFileURL(filePath).href))
+        .default as SafeHtml;
       return { route, content, description: "" };
     }),
   );
 
   const routes = new Map(entries.map(({ route, content }) => [route, content]));
-  const descriptions = new Map(entries.map(({ route, description }) => [route, description]));
+  const descriptions = new Map(
+    entries.map(({ route, description }) => [route, description]),
+  );
 
   return { routes, descriptions };
 }
@@ -95,11 +107,17 @@ export async function defineDocs(config: Config): Promise<Config> {
   return config;
 }
 
-export async function createDocs({ pagesDir, structure, base: rawBase }: Config = {}) {
+export async function createDocs({
+  pagesDir,
+  structure,
+  base: rawBase,
+}: Config = {}) {
   const base = rawBase?.replace(/\/$/, "") ?? "";
   const userPublicDir = resolve("public");
   console.log("building pages...");
-  const { routes, descriptions } = await buildPages(pagesDir ?? resolve("pages"));
+  const { routes, descriptions } = await buildPages(
+    pagesDir ?? resolve("pages"),
+  );
   console.log("building search index...");
   const favicon = findFavicon(userPublicDir);
   const searchIndexJson = buildSearchIndex(routes, descriptions);
@@ -121,12 +139,16 @@ export async function createDocs({ pagesDir, structure, base: rawBase }: Config 
 
       if (content === undefined) {
         res.writeHead(404, { "Content-Type": "text/html" });
-        res.end(`${await layout(routes, structure, urlPath, ErrorPage, favicon, base)}`);
+        res.end(
+          `${await layout(routes, structure, urlPath, ErrorPage, favicon, base)}`,
+        );
         return;
       }
 
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(`${await layout(routes, structure, urlPath, content, favicon, base)}`);
+      res.end(
+        `${await layout(routes, structure, urlPath, content, favicon, base)}`,
+      );
     },
   );
 
@@ -140,11 +162,26 @@ export async function createDocs({ pagesDir, structure, base: rawBase }: Config 
   return server;
 }
 
-export async function buildDocs({ pagesDir, outDir, structure, base: rawBase }: Config = {}) {
+export async function buildDocs({
+  pagesDir,
+  outDir,
+  structure,
+  base: rawBase,
+}: Config = {}) {
+  console.log(`   ▄▄
+   ██
+▄████ ▄███▄ ▄████ ▄████ ▄█▀█▄ ████▄
+██ ██ ██ ██ ██    ██ ██ ██▄█▀ ██ ██
+▀████ ▀███▀ ▀████ ▀████ ▀█▄▄▄ ██ ██
+                     ██
+                   ▀▀▀`);
+
   const base = rawBase?.replace(/\/$/, "") ?? "";
   const resolvedOut = outDir ?? resolve("dist");
   const userPublicDir = resolve("public");
-  const { routes, descriptions } = await buildPages(pagesDir ?? resolve("pages"));
+  const { routes, descriptions } = await buildPages(
+    pagesDir ?? resolve("pages"),
+  );
   const favicon = findFavicon(userPublicDir);
   const searchIndexJson = buildSearchIndex(routes, descriptions);
 
@@ -166,15 +203,6 @@ export async function buildDocs({ pagesDir, outDir, structure, base: rawBase }: 
     );
     console.log(`  built ${route}`);
   }
-
-  console.log(`                                    
-   ▄▄                               
-   ██                               
-▄████ ▄███▄ ▄████ ▄████ ▄█▀█▄ ████▄ 
-██ ██ ██ ██ ██    ██ ██ ██▄█▀ ██ ██ 
-▀████ ▀███▀ ▀████ ▀████ ▀█▄▄▄ ██ ██ 
-                     ██             
-                   ▀▀▀              `)
 
   console.log(`\ndone → ${resolvedOut}`);
 }

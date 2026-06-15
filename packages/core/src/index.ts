@@ -25,6 +25,7 @@ export type { NavItem };
 export interface Config {
   pagesDir?: string;
   outDir?: string;
+  base?: string;
   structure?: NavItem[];
 }
 
@@ -72,17 +73,19 @@ async function buildPages(pagesDir: string) {
     files.map(async (filePath) => {
       const ext = extname(filePath);
       const route = fileToRoute(filePath, pagesDir);
-      const content =
-        ext === ".md"
-          ? await parseMarkdown(readFileSync(filePath, "utf-8"))
-          : ((await import(pathToFileURL(filePath).href)).default as SafeHtml);
-      return [route, content] as [string, SafeHtml];
+      if (ext === ".md") {
+        const parsed = await parseMarkdown(readFileSync(filePath, "utf-8"));
+        return { route, content: parsed.html, description: parsed.frontmatter.description ?? "" };
+      }
+      const content = (await import(pathToFileURL(filePath).href)).default as SafeHtml;
+      return { route, content, description: "" };
     }),
   );
 
-  const routes = new Map(entries);
+  const routes = new Map(entries.map(({ route, content }) => [route, content]));
+  const descriptions = new Map(entries.map(({ route, description }) => [route, description]));
 
-  return { routes };
+  return { routes, descriptions };
 }
 
 export async function defineDocs(config: Config): Promise<Config> {
@@ -92,11 +95,15 @@ export async function defineDocs(config: Config): Promise<Config> {
   return config;
 }
 
-export async function createDocs({ pagesDir, structure }: Config = {}) {
+export async function createDocs({ pagesDir, structure, base: rawBase }: Config = {}) {
+  const base = rawBase?.replace(/\/$/, "") ?? "";
   const userPublicDir = resolve("public");
-  const { routes } = await buildPages(pagesDir ?? resolve("pages"));
+  console.log("building pages...");
+  const { routes, descriptions } = await buildPages(pagesDir ?? resolve("pages"));
+  console.log("building search index...");
   const favicon = findFavicon(userPublicDir);
-  const searchIndexJson = buildSearchIndex(routes);
+  const searchIndexJson = buildSearchIndex(routes, descriptions);
+  console.log("starting server...");
 
   const server = createServer(
     async (req: IncomingMessage, res: ServerResponse) => {
@@ -114,12 +121,12 @@ export async function createDocs({ pagesDir, structure }: Config = {}) {
 
       if (content === undefined) {
         res.writeHead(404, { "Content-Type": "text/html" });
-        res.end(`${await layout(routes, structure, urlPath, ErrorPage, favicon)}`);
+        res.end(`${await layout(routes, structure, urlPath, ErrorPage, favicon, base)}`);
         return;
       }
 
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(`${await layout(routes, structure, urlPath, content, favicon)}`);
+      res.end(`${await layout(routes, structure, urlPath, content, favicon, base)}`);
     },
   );
 
@@ -133,12 +140,13 @@ export async function createDocs({ pagesDir, structure }: Config = {}) {
   return server;
 }
 
-export async function buildDocs({ pagesDir, outDir, structure }: Config = {}) {
+export async function buildDocs({ pagesDir, outDir, structure, base: rawBase }: Config = {}) {
+  const base = rawBase?.replace(/\/$/, "") ?? "";
   const resolvedOut = outDir ?? resolve("dist");
   const userPublicDir = resolve("public");
-  const { routes } = await buildPages(pagesDir ?? resolve("pages"));
+  const { routes, descriptions } = await buildPages(pagesDir ?? resolve("pages"));
   const favicon = findFavicon(userPublicDir);
-  const searchIndexJson = buildSearchIndex(routes);
+  const searchIndexJson = buildSearchIndex(routes, descriptions);
 
   rmSync(resolvedOut, { recursive: true, force: true });
   mkdirSync(resolvedOut, { recursive: true });
@@ -154,7 +162,7 @@ export async function buildDocs({ pagesDir, outDir, structure }: Config = {}) {
     mkdirSync(dir, { recursive: true });
     writeFileSync(
       join(dir, "index.html"),
-      `${await layout(routes, structure, route, content, favicon)}`,
+      `${await layout(routes, structure, route, content, favicon, base)}`,
     );
     console.log(`  built ${route}`);
   }

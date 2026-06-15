@@ -69,16 +69,25 @@
         position: sticky;
         top: 55px;
         z-index: 1;
+
+        a[aria-current="page"] {
+          background-color: var(--ui-neutral-200);
+        }
       }
 
       > section {
         padding: 2.5rem 3rem;
+        height: 100%;
+
+        > div {
+          max-width: 800px;
+          margin-inline: auto;
+        }
       }
 
       > aside {
         width: 200px;
-        padding: 1rem 0.5rem;
-        /* border-left: 1px solid var(--border-color); */
+        padding: 3rem 0.5rem;
 
         position: sticky;
         top: 55px;
@@ -126,6 +135,9 @@
       position: absolute;
       top: 0.5rem;
       right: 0.5rem;
+      display: flex;
+
+      color: var(--ui-neutral-600);
     }
 
     .line {

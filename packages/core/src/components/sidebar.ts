@@ -3,6 +3,7 @@ import { html, safe, SafeHtml } from "#html";
 export function sidebar(
   routes: Map<string, SafeHtml>,
   currentRoute: string,
+  base = "",
 ): SafeHtml {
   const routeKeys = [...routes.keys()];
 
@@ -31,7 +32,16 @@ export function sidebar(
     <li><small>${label}</small></li>
     ${children.map((r) => {
       const name = r === section ? "overview" : (r.split("/").pop() ?? r);
-      return html`<li><a href="${r}" class="button ghost">${name}</a></li>`;
+      const active = r === currentRoute;
+      return html`<li>
+        <a
+          href="${base}${r}"
+          class="button ghost"
+          ${active && html`aria-current="page"`}
+        >
+          ${name}
+        </a>
+      </li>`;
     })}
   </menu>`;
 }

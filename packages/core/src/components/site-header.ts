@@ -11,6 +11,7 @@ export interface NavItem {
 
 async function buildNav(
   routes: Map<string, SafeHtml>,
+  base: string,
   structure?: NavItem[],
 ): Promise<SafeHtml> {
   if (!structure) {
@@ -18,7 +19,7 @@ async function buildNav(
       [...routes.keys()]
         .map(
           (route) =>
-            `<a href="${route}" class="button ghost">${route === "/" ? "home" : route.slice(1)}</a>`,
+            `<a href="${base}${route}" class="button ghost">${route === "/" ? "home" : route.slice(1)}</a>`,
         )
         .join("\n"),
     );
@@ -27,7 +28,7 @@ async function buildNav(
   const links = await Promise.all(
     structure.map(async ({ label, path, icon: iconName }) => {
       const svg = await icon(iconName);
-      return `<a href="${path}" class="button ghost">${svg.value}${label}</a>`;
+      return `<a href="${base}${path}" class="button ghost">${svg.value}${label}</a>`;
     }),
   );
 
@@ -37,13 +38,14 @@ async function buildNav(
 export async function siteHeader(
   routes: Map<string, SafeHtml>,
   structure?: NavItem[],
+  base = "",
 ): Promise<SafeHtml> {
-  const nav = await buildNav(routes, structure);
+  const nav = await buildNav(routes, base, structure);
 
   return html`
     <header>
-      <a href="/" aria-label="Homepage">
-        <img src="/logo.jpg" />
+      <a href="${base}/" aria-label="Homepage">
+        <img src="${base}/logo.jpg" />
       </a>
 
       <nav>${nav}</nav>

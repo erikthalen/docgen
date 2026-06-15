@@ -4,6 +4,9 @@
   "scripts": {
     "dev": "pnpm run -r --parallel --if-present dev"
   },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  },
   "engines": {
     "node": ">=23.6.0"
   }

@@ -1,3 +1,7 @@
+---
+description: All configuration options for docs.config.ts — pagesDir, outDir, and the structure nav array.
+---
+
 # Configuration
 
 All configuration lives in `docs.config.ts` at your project root.

@@ -1,19 +1,22 @@
 export class SafeHtml {
-  readonly value: string;
-  constructor(value: string) {
+  /** @param {string} value */
+  constructor(value) {
+    /** @type {string} */
     this.value = value;
   }
-  toString(): string {
+  /** @returns {string} */
+  toString() {
     return this.value;
   }
 }
 
-export function safe(value: string): SafeHtml {
+/** @param {string} value @returns {SafeHtml} */
+export function safe(value) {
   return new SafeHtml(value);
 }
 
-function insert(value: unknown): string {
-  if (!value) return "";
+/** @param {unknown} value @returns {string} */
+function insert(value) {
   if (value instanceof SafeHtml) return value.value;
   if (Array.isArray(value)) return value.map(insert).join("");
   return String(value)
@@ -24,7 +27,8 @@ function insert(value: unknown): string {
     .replace(/'/g, "&#39;");
 }
 
-export function html(strings: TemplateStringsArray, ...values: unknown[]): SafeHtml {
+/** @param {TemplateStringsArray} strings @param {...unknown} values @returns {SafeHtml} */
+export function html(strings, ...values) {
   let result = strings[0];
   for (let i = 0; i < values.length; i++) {
     result += insert(values[i]);

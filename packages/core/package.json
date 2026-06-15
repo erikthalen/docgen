@@ -17,6 +17,7 @@
     "rehype-slug": "catalog:",
     "rehype-stringify": "catalog:",
     "remark-gfm": "catalog:",
+    "remark-frontmatter": "catalog:",
     "remark-parse": "catalog:",
     "remark-rehype": "catalog:",
     "unified": "catalog:"

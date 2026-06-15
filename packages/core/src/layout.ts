@@ -2,7 +2,6 @@ import { html, SafeHtml } from "#html";
 import { siteHeader, type NavItem } from "./components/site-header.ts";
 import { sidebar } from "./components/sidebar.ts";
 import { toc } from "./components/toc.ts";
-import copyCode from "./components/copy-code.ts";
 import { searchDialog } from "./components/search.ts";
 
 export async function layout(
@@ -11,18 +10,28 @@ export async function layout(
   currentRoute: string,
   content: SafeHtml,
   favicon = "/favicon.jpg",
+  base = "",
 ): Promise<SafeHtml> {
-  const header = await siteHeader(routes, structure);
-  const aside = sidebar(routes, currentRoute);
+  const header = await siteHeader(routes, structure, base);
+  const aside = sidebar(routes, currentRoute, base);
   const tocNav = await toc(content);
+
+  const h1Match = content.value.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+  const pageTitle = h1Match
+    ? h1Match[1].replace(/<[^>]+>/g, "").trim() + " – Docgen"
+    : "Docgen";
+
+  console.log(currentRoute, base);
 
   return html`<!DOCTYPE html>
     <html>
       <head>
         <meta charset="utf-8" />
-        <link rel="icon" href="${favicon}" />
+        <meta name="docgen-base" content="${base}" />
+        <title>${pageTitle}</title>
+        <link rel="icon" href="${base}${favicon}" />
         <link rel="stylesheet" href="https://esm.sh/@erikt/ui" />
-        <link rel="stylesheet" href="/docgen.css" />
+        <link rel="stylesheet" href="${base}/docgen.css" />
 
         <script type="importmap">
           {
@@ -40,16 +49,22 @@ export async function layout(
 
           Alpine.plugin(persist);
         </script>
+
+        <script src="${base}/copy-code.js" type="module"></script>
       </head>
       <body>
         ${header}
 
         <main>
           ${aside.value && html`<nav>${aside}</nav>`}
-
-          <section class="prose">${content}</section>
-
-          ${tocNav.value && html`<aside>${tocNav}</aside>`}
+          ${currentRoute === "/"
+            ? content
+            : html`<section>
+                <div class="prose">${content}</div>
+              </section>`}
+          ${currentRoute !== "/" &&
+          tocNav.value &&
+          html`<aside>${tocNav}</aside>`}
         </main>
 
         <script type="module">
@@ -59,7 +74,6 @@ export async function layout(
         </script>
 
         ${searchDialog}
-        ${copyCode}
       </body>
     </html>`;
 }

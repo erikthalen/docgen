@@ -1,3 +1,7 @@
+---
+description: How to deploy your docgen site to GitHub Pages using a GitHub Actions workflow.
+---
+
 # Deployment
 
 `docgen build` writes a static site to `dist/`. The output is a flat folder of HTML files with a `.nojekyll` marker, ready to deploy to any static host.

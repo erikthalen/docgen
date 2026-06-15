@@ -11,21 +11,25 @@ function extractTitle(str: string): string {
   return match[1].replace(/<[^>]+>/g, "").trim();
 }
 
-export function buildSearchIndex(routes: Map<string, SafeHtml>): string {
+export function buildSearchIndex(
+  routes: Map<string, SafeHtml>,
+  descriptions: Map<string, string>,
+): string {
   const search = new MiniSearch({
     fields: ["title", "content"],
-    storeFields: ["title", "id"],
+    storeFields: ["title", "id", "description"],
   });
 
   const docs = [...routes.entries()].map(([route, content]) => ({
     id: route,
     title: extractTitle(content.value) || (route === "/" ? "Home" : route.slice(1)),
     content: stripHtml(content.value),
+    description: descriptions.get(route) ?? "",
   }));
 
   search.addAll(docs);
 
-  const popular = docs.map(({ id, title }) => ({ id, title }));
+  const popular = docs.map(({ id, title, description }) => ({ id, title, description }));
 
   return JSON.stringify({ index: JSON.stringify(search), popular });
 }

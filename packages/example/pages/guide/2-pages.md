@@ -1,3 +1,7 @@
+---
+description: How to write Markdown and TypeScript pages, use file-based routing, order sidebar links, and serve static assets.
+---
+
 # Writing pages
 
 Pages live in the `pages/` directory. Two file types are supported.

@@ -1,3 +1,7 @@
+---
+description: How to install docgen, set up your project structure, and run the dev server or build command.
+---
+
 # Installation
 
 ## Requirements

@@ -1,3 +1,7 @@
+---
+description: Reference for the html, safe, defineDocs, and SafeHtml exports from @erikt/docgen.
+---
+
 # API reference
 
 ## html

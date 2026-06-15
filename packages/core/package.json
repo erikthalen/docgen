@@ -1,13 +1,13 @@
 {
   "name": "@erikt/docgen",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "type": "module",
   "bin": {
     "docgen": "./dist/bin.js"
   },
   "scripts": {
-    "dev": "tsc --project tsconfig.build.json --watch",
-    "build": "tsc --project tsconfig.build.json"
+    "dev": "tsc --project tsconfig.build.json && cp -r public dist/ && tsc --project tsconfig.build.json --watch",
+    "build": "tsc --project tsconfig.build.json && cp -r public dist/"
   },
   "imports": {
     "#html": "./dist/utils/html.js"

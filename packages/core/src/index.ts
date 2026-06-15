@@ -29,7 +29,7 @@ export interface Config {
   githubLink?: string;
 }
 
-const corePublicDir = fileURLToPath(new URL("../public", import.meta.url));
+const corePublicDir = fileURLToPath(new URL("./public", import.meta.url));
 
 const FAVICON_EXTS = ["ico", "svg", "png", "jpg", "jpeg"];
 

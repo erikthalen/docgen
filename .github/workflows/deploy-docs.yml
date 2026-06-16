@@ -30,9 +30,17 @@ jobs:
           node-version: "23"
           cache: pnpm
 
-      - run: pnpm install
+      - name: Install core dependencies
+        run: pnpm --filter @erikt/docgen install
 
-      - run: pnpm build
+      - name: Build core
+        run: pnpm --filter @erikt/docgen build
+
+      - name: Install example dependencies
+        run: pnpm --filter @docgen/example install
+
+      - name: Build example
+        run: pnpm --filter @docgen/example build
 
       - uses: actions/configure-pages@v5
 

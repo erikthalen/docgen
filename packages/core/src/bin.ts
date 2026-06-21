@@ -12,7 +12,7 @@ const configPath = resolve("docs.config.ts");
 if (command === "dev") {
   const coreSrc = resolve(import.meta.dirname, "..", "src");
   const watchArgs = existsSync(coreSrc) ? [`--watch-path=${coreSrc}`] : [];
-  spawn("node", ["--watch", "--watch-path=./pages", ...watchArgs, configPath], { stdio: "inherit" });
+  spawn("node", ["--watch", "--watch-path=./pages", `--watch-path=${configPath}`, ...watchArgs, configPath], { stdio: "inherit" });
 } else if (command === "build") {
   const { default: configPromise } = await import(pathToFileURL(configPath).href);
   const config = await configPromise;

@@ -13,6 +13,7 @@ export async function layout(
   favicon = "/favicon.jpg",
   base = "",
   githubLink?: string,
+  siteName = "Docgen",
 ): Promise<SafeHtml> {
   const header = await siteHeader(routes, structure, base, currentRoute, githubLink);
   const sidebarComponent = sidebar(routes, currentRoute, base);
@@ -20,8 +21,8 @@ export async function layout(
 
   const h1Match = content.value.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
   const pageTitle = h1Match
-    ? h1Match[1].replace(/<[^>]+>/g, "").trim() + " – Docgen"
-    : "Docgen";
+    ? h1Match[1].replace(/<[^>]+>/g, "").trim() + ` – ${siteName}`
+    : siteName;
 
   return html`<!DOCTYPE html>
     <html>

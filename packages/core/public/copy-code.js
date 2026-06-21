@@ -3,11 +3,7 @@ import { html } from "html.js";
 
 Alpine.data("copyCode", () => ({
   template: html`
-    <label
-      class="toggle ghost square"
-      aria-label="Copy code"
-      data-tooltip="left"
-    >
+    <label class="toggle ghost square" aria-label="Copy code">
       <input type="checkbox" />
       <svg
         data-unchecked
@@ -57,9 +53,11 @@ Alpine.data("copyCode", () => ({
 
       const label = span.querySelector("label");
       label.setAttribute("aria-label", "Copied");
+      label.setAttribute("data-tooltop", "left");
 
       setTimeout(() => {
         label.setAttribute("aria-label", "Copy code");
+        label.removeAttribute("data-tooltop");
         span.querySelector("input").checked = false;
       }, 1000);
     });

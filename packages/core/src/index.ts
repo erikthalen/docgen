@@ -27,6 +27,8 @@ export interface Config {
   base?: string;
   structure?: NavItem[];
   githubLink?: string;
+  siteName?: string;
+  port?: number;
 }
 
 const corePublicDir = fileURLToPath(new URL("./public", import.meta.url));
@@ -125,6 +127,8 @@ export async function createDocs({
   structure,
   base: rawBase,
   githubLink,
+  siteName,
+  port = 5151,
 }: Config = {}) {
   const base = rawBase ? `/${rawBase.replace(/^\/|\/$/g, "")}` : "";
   const userPublicDir = resolve("public");
@@ -156,20 +160,20 @@ export async function createDocs({
       if (content === undefined) {
         res.writeHead(404, { "Content-Type": "text/html" });
         res.end(
-          `${await layout(routes, structure, urlPath, ErrorPage, favicon, base, githubLink)}`,
+          `${await layout(routes, structure, urlPath, ErrorPage, favicon, base, githubLink, siteName)}`,
         );
         return;
       }
 
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       res.end(
-        `${await layout(routes, structure, urlPath, content, favicon, base, githubLink)}`,
+        `${await layout(routes, structure, urlPath, content, favicon, base, githubLink, siteName)}`,
       );
     },
   );
 
-  server.listen(5151, () => {
-    console.log("listening on http://localhost:5151" + base);
+  server.listen(port, () => {
+    console.log(`listening on http://localhost:${port}` + base);
     // for (const route of routes.keys()) {
     //   console.log(`  ${route}`);
     // }
@@ -184,6 +188,7 @@ export async function buildDocs({
   structure,
   base: rawBase,
   githubLink,
+  siteName,
 }: Config = {}) {
   console.log(`   ▄▄
    ██
@@ -216,7 +221,7 @@ export async function buildDocs({
     await mkdir(dir, { recursive: true });
     await writeFile(
       join(dir, "index.html"),
-      `${await layout(routes, structure, route, content, favicon, base, githubLink)}`,
+      `${await layout(routes, structure, route, content, favicon, base, githubLink, siteName)}`,
     );
     console.log(`  built ${route}`);
   }

@@ -2,9 +2,10 @@ import { defineDocs } from "@erikt/docgen";
 
 export default defineDocs({
   port: 5152,
-  siteName: 'Example Docgen',
-  githubLink: 'https://github.com/erikthalen/docgen',
+  siteName: "Example Docgen",
+  githubLink: "https://github.com/erikthalen/docgen",
   structure: [
+    { label: "Intro", path: "/intro", icon: "wand" },
     { label: "Guide", path: "/guide", icon: "book" },
     { label: "API", path: "/api", icon: "code" },
   ],

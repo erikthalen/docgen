@@ -86,15 +86,28 @@ function fileToRoute(filePath: string, pagesDir: string): string {
   return "/" + normalized;
 }
 
+const perf = process.env.DOCGEN_PERF === "1";
+
 async function buildPages(pagesDir: string) {
+  console.log("scanning pages...");
+  const t0 = perf ? performance.now() : 0;
   const files = await scanPages(pagesDir, pagesDir);
+  if (perf)
+    console.log(
+      `[perf] scanPages total: ${(performance.now() - t0).toFixed(1)}ms`,
+    );
 
   const entries = await Promise.all(
     files.map(async (filePath) => {
       const ext = extname(filePath);
       const route = fileToRoute(filePath, pagesDir);
+      const t0 = perf ? performance.now() : 0;
       if (ext === ".md") {
         const parsed = await parseMarkdown(await readFile(filePath, "utf-8"));
+        if (perf)
+          console.log(
+            `  [perf] ${(performance.now() - t0).toFixed(1)}ms  ${route} (md)`,
+          );
         return {
           route,
           content: parsed.html,
@@ -103,6 +116,10 @@ async function buildPages(pagesDir: string) {
       }
       const content = (await import(pathToFileURL(filePath).href))
         .default as SafeHtml;
+      if (perf)
+        console.log(
+          `  [perf] ${(performance.now() - t0).toFixed(1)}ms  ${route} (ts)`,
+        );
       return { route, content, description: "" };
     }),
   );
@@ -133,12 +150,22 @@ export async function createDocs({
   const base = rawBase ? `/${rawBase.replace(/^\/|\/$/g, "")}` : "";
   const userPublicDir = resolve("public");
   console.log("building pages...");
+  const t0 = perf ? performance.now() : 0;
   const { routes, descriptions } = await buildPages(
     pagesDir ?? resolve("pages"),
   );
+  if (perf)
+    console.log(
+      `[perf] buildPages total: ${(performance.now() - t0).toFixed(1)}ms`,
+    );
   console.log("building search index...");
+  const t1 = perf ? performance.now() : 0;
   const favicon = await findFavicon(userPublicDir);
   const searchIndexJson = buildSearchIndex(routes, descriptions);
+  if (perf)
+    console.log(
+      `[perf] searchIndex + favicon: ${(performance.now() - t1).toFixed(1)}ms`,
+    );
   console.log("starting server...");
 
   const server = createServer(
@@ -153,11 +180,21 @@ export async function createDocs({
         return;
       }
 
-      if (await serveStatic([userPublicDir, corePublicDir], urlPath, res)) return;
+      if (await serveStatic([userPublicDir, corePublicDir], urlPath, res))
+        return;
 
       const content = routes.get(urlPath);
 
       if (content === undefined) {
+        const firstChild = [...routes.keys()].find((r) =>
+          r.startsWith(urlPath + "/"),
+        );
+
+        if (firstChild) {
+          res.writeHead(302, { Location: base + firstChild });
+          res.end();
+          return;
+        }
         res.writeHead(404, { "Content-Type": "text/html" });
         res.end(
           `${await layout(routes, structure, urlPath, ErrorPage, favicon, base, githubLink, siteName)}`,
@@ -214,6 +251,27 @@ export async function buildDocs({
 
   for (const dir of [corePublicDir, userPublicDir]) {
     if (await pathExists(dir)) await cp(dir, resolvedOut, { recursive: true });
+  }
+
+  const allRoutes = [...routes.keys()];
+  const folderRoutes = new Set(
+    allRoutes
+      .filter((r) => r !== "/")
+      .map((r) => r.split("/").slice(0, -1).join("/") || "/")
+      .filter((parent) => parent !== "/" && !routes.has(parent)),
+  );
+
+  for (const folder of folderRoutes) {
+    const firstChild = allRoutes.find((r) => r.startsWith(folder + "/"));
+    if (!firstChild) continue;
+    const target = base + firstChild;
+    const dir = join(resolvedOut, folder);
+    await mkdir(dir, { recursive: true });
+    await writeFile(
+      join(dir, "index.html"),
+      `<!doctype html><html><head><meta http-equiv="refresh" content="0;url=${target}"><link rel="canonical" href="${target}"></head><body></body></html>`,
+    );
+    console.log(`  redirect ${folder} → ${firstChild}`);
   }
 
   for (const [route, content] of routes) {

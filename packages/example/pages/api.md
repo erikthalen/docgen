@@ -22,7 +22,7 @@ Arrays of `SafeHtml` values are joined without a separator:
 const items = ["one", "two", "three"];
 
 const list = html`<ul>
-  ${items.map(i => html`<li>${i}</li>`)}
+  ${items.map((i) => html`<li>${i}</li>`)}
 </ul>`;
 ```
 
@@ -48,9 +48,7 @@ import { defineDocs } from "@erikt/docgen";
 export default await defineDocs({
   pagesDir: "./pages",
   outDir: "./dist",
-  structure: [
-    { label: "Guide", path: "/guide", icon: "book" },
-  ],
+  structure: [{ label: "Guide", path: "/guide", icon: "book" }],
 });
 ```
 

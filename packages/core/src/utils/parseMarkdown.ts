@@ -14,7 +14,10 @@ function parseYaml(yaml: string): Record<string, string> {
     const colon = line.indexOf(":");
     if (colon === -1) continue;
     const key = line.slice(0, colon).trim();
-    const value = line.slice(colon + 1).trim().replace(/^["']|["']$/g, "");
+    const value = line
+      .slice(colon + 1)
+      .trim()
+      .replace(/^["']|["']$/g, "");
     if (key) data[key] = value;
   }
   return data;
@@ -75,6 +78,23 @@ const processor = unified()
   .use(remarkRehype)
   .use(rehypeSlug)
   .use(rehypeShiki, {
+    langs: [
+      "javascript",
+      "typescript",
+      "jsx",
+      "tsx",
+      "html",
+      "css",
+      "json",
+      "yaml",
+      "toml",
+      "bash",
+      "sh",
+      "markdown",
+      "python",
+      "rust",
+      "go",
+    ],
     themes: { light: "github-light", dark: "github-dark" },
     defaultColor: false,
     transformers: [

@@ -1,4 +1,4 @@
-import { html, safe } from "@erikt/docgen";
+import { html, icon, safe } from "@erikt/docgen";
 import { createHighlighter } from "shiki";
 
 const highlighter = await createHighlighter({
@@ -225,7 +225,7 @@ export default html`
 
     <div class="home-features">
       <div class="home-feature">
-        <strong>No build step</strong>
+        <strong>${await icon('book')} No build step</strong>
         <p>
           Runs TypeScript directly via Node.js &ge;23.6. No tsc, no esbuild, no
           config.

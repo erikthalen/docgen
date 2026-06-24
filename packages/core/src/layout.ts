@@ -14,6 +14,7 @@ export async function layout(
   base = "",
   githubLink?: string,
   siteName = "Docgen",
+  brandColor?: string,
 ): Promise<SafeHtml> {
   const header = await siteHeader(routes, structure, base, currentRoute, githubLink);
   const sidebarComponent = sidebar(routes, currentRoute, base);
@@ -34,6 +35,7 @@ export async function layout(
         <link rel="icon" href="${base}${favicon}" />
         <link rel="stylesheet" href="https://esm.sh/@erikt/ui" />
         <link rel="stylesheet" href="${base}/docgen.css" />
+        ${brandColor && html`<style>:root { --ui-primary: ${brandColor}; }</style>`}
 
         <script type="importmap">
           {

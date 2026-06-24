@@ -11,8 +11,12 @@ export async function toc(content: SafeHtml): Promise<SafeHtml> {
   const headings: { level: number; id: string; text: string }[] = [];
 
   for (const match of content.value.matchAll(headingPattern)) {
+    const level = parseInt(match[1]);
+
+    if (level === 1) continue;
+
     headings.push({
-      level: parseInt(match[1]),
+      level: level,
       id: match[2],
       text: stripTags(match[3]).trim(),
     });

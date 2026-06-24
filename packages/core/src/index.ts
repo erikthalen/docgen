@@ -14,11 +14,12 @@ import { html, safe, SafeHtml } from "#html";
 import { parseMarkdown } from "./utils/parseMarkdown.js";
 import { serveStatic } from "./utils/serveStatic.js";
 import { buildSearchIndex } from "./utils/buildSearchIndex.js";
+import { icon } from "./utils/icons.js";
 import { layout } from "./layout.js";
 import { type NavItem } from "./components/site-header.js";
 import ErrorPage from "./components/error.js";
 
-export { html, safe };
+export { html, safe, icon };
 export type { NavItem };
 
 export interface Config {
@@ -29,6 +30,7 @@ export interface Config {
   githubLink?: string;
   siteName?: string;
   port?: number;
+  brandColor?: string;
 }
 
 const corePublicDir = fileURLToPath(new URL("./public", import.meta.url));
@@ -146,6 +148,7 @@ export async function createDocs({
   githubLink,
   siteName,
   port = 5151,
+  brandColor,
 }: Config = {}) {
   const base = rawBase ? `/${rawBase.replace(/^\/|\/$/g, "")}` : "";
   const userPublicDir = resolve("public");
@@ -197,14 +200,14 @@ export async function createDocs({
         }
         res.writeHead(404, { "Content-Type": "text/html" });
         res.end(
-          `${await layout(routes, structure, urlPath, ErrorPage, favicon, base, githubLink, siteName)}`,
+          `${await layout(routes, structure, urlPath, ErrorPage, favicon, base, githubLink, siteName, brandColor)}`,
         );
         return;
       }
 
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       res.end(
-        `${await layout(routes, structure, urlPath, content, favicon, base, githubLink, siteName)}`,
+        `${await layout(routes, structure, urlPath, content, favicon, base, githubLink, siteName, brandColor)}`,
       );
     },
   );
@@ -226,6 +229,7 @@ export async function buildDocs({
   base: rawBase,
   githubLink,
   siteName,
+  brandColor,
 }: Config = {}) {
   console.log(`   ▄▄
    ██
@@ -279,7 +283,7 @@ export async function buildDocs({
     await mkdir(dir, { recursive: true });
     await writeFile(
       join(dir, "index.html"),
-      `${await layout(routes, structure, route, content, favicon, base, githubLink, siteName)}`,
+      `${await layout(routes, structure, route, content, favicon, base, githubLink, siteName, brandColor)}`,
     );
     console.log(`  built ${route}`);
   }

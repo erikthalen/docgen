@@ -50,7 +50,48 @@ function rehypeCodeFilename() {
     function walk(node: any, parent: any, index: number) {
       if (node.type === "element" && node.tagName === "pre") {
         const filename = node.properties?.dataFilename as string | undefined;
-        if (filename && parent) {
+        const isTerminal = node.properties?.dataTerminal === "true";
+
+        if (isTerminal && parent) {
+          console.log("node.properties", node.properties.dataTerminal);
+          delete node.properties.dataTerminal;
+          node.properties.className = [
+            ...(node.properties.className ?? []),
+            "code-terminal",
+          ];
+          parent.children.splice(index, 0, {
+            type: "element",
+            tagName: "div",
+            properties: { className: ["code-terminal-header"] },
+            children: [
+              {
+                type: "element",
+                tagName: "div",
+                properties: { className: ["code-terminal-dots"] },
+                children: [
+                  {
+                    type: "element",
+                    tagName: "span",
+                    properties: { className: ["dot", "dot-red"] },
+                    children: [],
+                  },
+                  {
+                    type: "element",
+                    tagName: "span",
+                    properties: { className: ["dot", "dot-yellow"] },
+                    children: [],
+                  },
+                  {
+                    type: "element",
+                    tagName: "span",
+                    properties: { className: ["dot", "dot-green"] },
+                    children: [],
+                  },
+                ],
+              },
+            ],
+          });
+        } else if (filename && parent) {
           delete node.properties.dataFilename;
           parent.children.splice(index, 0, {
             type: "element",
@@ -102,7 +143,11 @@ const processor = unified()
         pre(node) {
           node.properties["x-data"] = "copyCode";
           const meta = (this.options.meta as any)?.__raw as string | undefined;
-          if (meta) node.properties.dataFilename = meta;
+          if (meta === "terminal") {
+            node.properties.dataTerminal = "true";
+          } else if (meta) {
+            node.properties.dataFilename = meta;
+          }
         },
       },
     ],

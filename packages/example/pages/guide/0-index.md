@@ -18,7 +18,7 @@ A minimal documentation site generator built on Node.js native TypeScript. Point
 
 ## Quick start
 
-```bash
+```bash terminal
 pnpm add @erikt/docgen
 ```
 

@@ -53,11 +53,11 @@ Alpine.data("copyCode", () => ({
 
       const label = span.querySelector("label");
       label.setAttribute("aria-label", "Copied");
-      label.setAttribute("data-tooltop", "left");
+      label.setAttribute("data-tooltip", "left");
 
       setTimeout(() => {
         label.setAttribute("aria-label", "Copy code");
-        label.removeAttribute("data-tooltop");
+        label.removeAttribute("data-tooltip");
         span.querySelector("input").checked = false;
       }, 1000);
     });
